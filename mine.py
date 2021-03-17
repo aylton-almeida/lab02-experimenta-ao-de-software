@@ -22,7 +22,7 @@ def mine_repos():
     total_repos = 1000
     repos_per_request = 100
     # TODO: replace with Y3Vyc29yOjI=
-    initial_cursor = 'Y3Vyc29yOjQ='  # First repo with .java files
+    initial_cursor = 'Y3Vyc29yOjI='  # First repo with .java files
 
     if total_repos % repos_per_request != 0:
         raise Exception('repos_per_request should be divisible by total_repos')
@@ -53,6 +53,7 @@ def mine_repos():
                 repo_list) > 0 else None
 
             print('Fetching cursor: {}'.format(current_cursor))
+            print('Current token: {}'.format(current_token))
 
             # Build query
             query = get_query(repos_per_request,
