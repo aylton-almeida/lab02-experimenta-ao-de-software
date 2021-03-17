@@ -19,7 +19,7 @@ def mine_repos():
               for token in os.getenv('AUTH_TOKENS').split(',')]
 
     # ? Set your request configs here
-    total_repos = 1000
+    total_repos = 100
     repos_per_request = 100
     # TODO: replace with Y3Vyc29yOjI=
     initial_cursor = 'Y3Vyc29yOjI='  # First repo with .java files
@@ -67,6 +67,9 @@ def mine_repos():
             for repo in repo_data:
                 new_repo = Repo(repo)
 
+                if (len(repo_list) % 50) == 0:
+                    save_repos_to_csv(repo_list, 'data.csv')
+
                 print('Searching for .java files for {}...'.format(
                     new_repo.nameWithOwner))
                 if has_java_file(new_repo.nameWithOwner, tokens[int(current_token)].replace('Bearer ', '')):
@@ -78,9 +81,6 @@ def mine_repos():
 
                 if len(repo_list) == total_repos:
                     break
-
-            if len(repo_list) % 50 == 0:
-                save_repos_to_csv(repo_list, 'data.csv')
 
         except Exception as err:
             print(err)
