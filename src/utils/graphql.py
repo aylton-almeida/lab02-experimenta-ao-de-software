@@ -26,7 +26,7 @@ def get_query(repos_per_request: int, cursor: str = None, stars: str = '>100'):
         }
       }
     }
-    """ % {'repos': repos_per_request, 'stars': stars, "after": ('"{}"'.format(cursor) or 'null')}
+    """ % {'repos': repos_per_request, 'stars': stars, "after": ('"{}"'.format(cursor) if cursor else 'null')}
 
 
 def get_repos_data(url: str, query: str, token: str):

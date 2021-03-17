@@ -1,6 +1,6 @@
 from __future__ import annotations
-import pandas as pd
 from pandas.core.frame import DataFrame
+from pandas.core.series import Series
 
 
 class Repo:
@@ -35,12 +35,16 @@ class Repo:
         self.loc = data.get('loc')
 
     @staticmethod
-    def from_dataframe(data: DataFrame) -> Repo:
+    def from_dataframe(data: Series) -> Repo:
         return Repo({
             'cursor': data['cursor'],
-            'nameWithOwner': data['nameWithOwner'],
-            'url': data['url'],
-            'stargazerCount': data['stargazerCount'],
-            'createdAt': data['createdAt'],
-            'releases': data['releases'],
+            'node': {
+                'nameWithOwner': data['nameWithOwner'],
+                'url': data['url'],
+                'stargazerCount': data['stargazerCount'],
+                'createdAt': data['createdAt'],
+                'releases': {
+                    'totalCount': data['releases']
+                },
+            }
         })

@@ -22,9 +22,9 @@ def mine_repos():
     # ? Set your request configs here
     total_repos = 1000
     repos_per_request = 100
-    stars = '>100'
-    # TODO: replace with Y3Vyc29yOjI=
-    initial_cursor = 'Y3Vyc29yOjI='  # First repo with .java files
+    stars = '<2694'
+    # First repo with .java files Y3Vyc29yOjI=
+    initial_cursor = None
 
     if total_repos % repos_per_request != 0:
         raise Exception('repos_per_request should be divisible by total_repos')
@@ -93,8 +93,8 @@ def mine_repos():
                 stars = '<{}'.format(repo_list[-1].stargazerCount)
                 print(stars)
 
-        except Exception as err:
-            time.sleep(60)
+        except:
+            time.sleep(len(repo_list) * 2)
             if current_token < len(tokens) - 1:
                 current_token += 1.
             else:
