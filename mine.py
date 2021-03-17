@@ -23,7 +23,7 @@ def mine_repos():
     repos_per_request = 100
     stars = '>100'
     # TODO: replace with Y3Vyc29yOjI=
-    initial_cursor = 'Y3Vyc29yOjg1OQ=='  # First repo with .java files
+    initial_cursor = 'Y3Vyc29yOjI='  # First repo with .java files
 
     if total_repos % repos_per_request != 0:
         raise Exception('repos_per_request should be divisible by total_repos')
@@ -46,7 +46,7 @@ def mine_repos():
 
     print('Fetching repos...')
 
-    current_cursor = None
+    current_cursor = initial_cursor
 
     while len(repo_list) < total_repos:
         # Make 1000 requests
@@ -58,7 +58,7 @@ def mine_repos():
 
             # Build query
             query = get_query(repos_per_request,
-                              current_cursor or initial_cursor, stars)
+                              current_cursor, stars)
 
             # Get repos data
             repo_data: list = get_repos_data(
