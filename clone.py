@@ -1,13 +1,12 @@
-from pprint import pprint
-from src.utils.csv import get_ck_data
-from src.models.Repo import Repo
-from src.utils.repos import has_java_file
-from src.utils.graphql import get_query, get_repos_data
 import pandas as pd
 import os
 import progressbar
 import git
 
+from src.utils.csv import get_ck_data
+from src.models.Repo import Repo
+from src.utils.repos import has_java_file
+from src.utils.graphql import get_query, get_repos_data
 from dotenv import load_dotenv
 
 # Load env file
@@ -19,17 +18,7 @@ tokens = ['Bearer {}'.format(token)
           for token in os.getenv('AUTH_TOKENS').split(',')]
 
 
-# ? Set your request configs here
-total_repos = 1
-repos_per_request = 1
-# TODO: replace with Y3Vyc29yOjI=
-initial_cursor = 'Y3Vyc29yOjEx'  # First repo with .java files
-
-if repos_per_request % total_repos != 0:
-    raise Exception('repos_per_request should be divisible by total_repos')
-
-
-repo_list: "list[Repo]" = []
+data_frame = pd.read_csv('data.csv')
 
 
 # extremely necessary progress bar for better user experience
@@ -39,7 +28,7 @@ widgets = [
 ]
 bar = progressbar.ProgressBar(
     widgets=widgets,
-    max_value=int(total_repos / repos_per_request),
+    max_value=data_frame.size,
     min_value=0,
     redirect_stdout=True
 ).start()
@@ -47,7 +36,10 @@ bar = progressbar.ProgressBar(
 
 current_token = 0
 
-print('Fetching repos...')
+print('Analyzing repos...')
+
+for index, row in data_frame.iterrows():
+
 
 i = 0
 while i < int(total_repos / repos_per_request):
@@ -65,7 +57,7 @@ while i < int(total_repos / repos_per_request):
         repo_data: list = get_repos_data(url, query, tokens[current_token])
 
         # For each repo clone and run ck through it
-        has_java_count = 0
+        has_java_count = i
         for repo in repo_data:
             new_repo = Repo(repo)
 
@@ -73,27 +65,29 @@ while i < int(total_repos / repos_per_request):
                 new_repo.nameWithOwner))
             if has_java_file(new_repo.nameWithOwner, tokens[current_token].replace('Bearer ', '')):
 
-                print('Cloning repo {}...'.format(new_repo.nameWithOwner))
+                print('Cloning repo {}...'.format(
+                    new_repo.nameWithOwner))
                 git.Git("repos").clone(new_repo.url)
 
-                print('Running CK...'.format(new_repo.nameWithOwner))
+                print('Running CK...'.format(
+                    new_repo.nameWithOwner))
                 os.system(
                     "java -jar ck/target/ck-0.6.4-SNAPSHOT-jar-with-dependencies.jar repos/{} true 0 false".format(new_repo.nameWithOwner.split('/')[1]))
 
-                new_repo.add_ck_data(get_ck_data())
+                new_repo.add_ck_data(get_ck_data('.', '.'))
 
                 # add repo to list
                 repo_list.append(new_repo)
 
                 # remove repo after finishing
                 print('Deleting repo {}')
-                os.system(
-                    'rm -rf repos/* class.csv method.csv')
+                # os.system(
+                #     'rm -rf repos/* class.csv method.csv')
 
                 has_java_count += 1
+                bar.update(i)
 
-            i += has_java_count
-            bar.update(i)
+        i += has_java_count
 
     except Exception as err:
         print(err)
