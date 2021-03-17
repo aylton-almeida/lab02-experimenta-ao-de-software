@@ -1,5 +1,6 @@
 import os
 import progressbar
+import time
 
 from pprint import pprint
 from src.utils.csv import get_ck_data, save_repos_to_csv
@@ -93,7 +94,7 @@ def mine_repos():
                 print(stars)
 
         except Exception as err:
-            print(err)
+            time.sleep(60)
             if current_token < len(tokens) - 1:
                 current_token += 1.
             else:
