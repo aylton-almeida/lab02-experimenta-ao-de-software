@@ -9,7 +9,7 @@ def get_query(repos_per_request: int, cursor: str = None):
     # ###
     return """
     query example {
-    search(type: REPOSITORY, first: %(repos)i, query: "stars:>100 language:java", after: %(after)s) {
+    search(type: REPOSITORY, first: %(repos)i, query: "stars:>10 language:java", after: %(after)s) {
       edges {
         cursor
         node {

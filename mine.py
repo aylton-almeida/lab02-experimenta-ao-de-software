@@ -19,7 +19,7 @@ def mine_repos():
               for token in os.getenv('AUTH_TOKENS').split(',')]
 
     # ? Set your request configs here
-    total_repos = 100
+    total_repos = 1000
     repos_per_request = 100
     # TODO: replace with Y3Vyc29yOjI=
     initial_cursor = 'Y3Vyc29yOjI='  # First repo with .java files
