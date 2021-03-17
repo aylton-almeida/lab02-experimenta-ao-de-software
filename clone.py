@@ -40,10 +40,10 @@ def clone_repo():
                 repo.nameWithOwner.split('/')[1]))
 
         repo.add_ck_data(get_ck_data('class.csv', 'method.csv'))
-        print(repo)
+        print(repo.__dict__)
 
         # remove repo after finishing
-        print('Deleting repo {}')
+        print('Deleting repo {}'.format(repo.nameWithOwner))
         os.system(
             'rm -rf repos/* class.csv method.csv')
 

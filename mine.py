@@ -2,8 +2,7 @@ import os
 import progressbar
 import time
 
-from pprint import pprint
-from src.utils.csv import get_ck_data, save_repos_to_csv
+from src.utils.csv import save_repos_to_csv
 from src.models.Repo import Repo
 from src.utils.repos import has_java_file
 from src.utils.graphql import get_query, get_repos_data
