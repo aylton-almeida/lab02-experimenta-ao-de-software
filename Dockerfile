@@ -1,7 +1,7 @@
 FROM python:3.8
 
 COPY requirements.txt .
-RUN pip instsall -r requirements.txt
+RUN pip install -r requirements.txt
 
 ARG API_URL
 ARG AUTH_TOKENS

@@ -78,6 +78,9 @@ def mine_repos():
                 if len(repo_list) == total_repos:
                     break
 
+            if len(repo_list) % 50 == 0:
+                save_repos_to_csv(repo_list, 'data.csv')
+
         except Exception as err:
             print(err)
             if current_token < len(tokens) - 1:
