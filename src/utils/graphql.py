@@ -3,13 +3,13 @@ import json
 from requests.models import Response
 
 
-def get_query(repos_per_request: int, cursor: str = None):
+def get_query(repos_per_request: int, cursor: str = None, stars: str = '>100'):
     ###
     # build api query
     # ###
     return """
     query example {
-    search(type: REPOSITORY, first: %(repos)i, query: "stars:>10 language:java", after: %(after)s) {
+    search(type: REPOSITORY, first: %(repos)i, query: "stars:%(stars)s language:java", after: %(after)s) {
       edges {
         cursor
         node {
@@ -26,7 +26,7 @@ def get_query(repos_per_request: int, cursor: str = None):
         }
       }
     }
-    """ % {'repos': repos_per_request, "after": ('"{}"'.format(cursor) or 'null')}
+    """ % {'repos': repos_per_request, 'stars': stars, "after": ('"{}"'.format(cursor) or 'null')}
 
 
 def get_repos_data(url: str, query: str, token: str):

@@ -21,8 +21,9 @@ def mine_repos():
     # ? Set your request configs here
     total_repos = 1000
     repos_per_request = 100
+    stars = '>100'
     # TODO: replace with Y3Vyc29yOjI=
-    initial_cursor = 'Y3Vyc29yOjI='  # First repo with .java files
+    initial_cursor = 'Y3Vyc29yOjg1OQ=='  # First repo with .java files
 
     if total_repos % repos_per_request != 0:
         raise Exception('repos_per_request should be divisible by total_repos')
@@ -45,42 +46,51 @@ def mine_repos():
 
     print('Fetching repos...')
 
+    current_cursor = None
+
     while len(repo_list) < total_repos:
         # Make 1000 requests
 
         try:
-            current_cursor = repo_list[-1].cursor if len(
-                repo_list) > 0 else None
 
             print('Fetching cursor: {}'.format(current_cursor))
             print('Current token: {}'.format(current_token))
 
             # Build query
             query = get_query(repos_per_request,
-                              current_cursor or initial_cursor)
+                              current_cursor or initial_cursor, stars)
 
             # Get repos data
             repo_data: list = get_repos_data(
                 url, query, tokens[int(current_token)])
 
-            # For each repo clone and run ck through it
-            for repo in repo_data:
-                new_repo = Repo(repo)
+            if len(repo_data) > 0:
 
-                if (len(repo_list) % 50) == 0:
-                    save_repos_to_csv(repo_list, 'data.csv')
+                # For each repo clone and run ck through it
+                for repo in repo_data:
+                    new_repo = Repo(repo)
 
-                print('Searching for .java files for {}...'.format(
-                    new_repo.nameWithOwner))
-                if has_java_file(new_repo.nameWithOwner, tokens[int(current_token)].replace('Bearer ', '')):
+                    if (len(repo_list) % 50) == 0:
+                        save_repos_to_csv(repo_list, 'data.csv')
 
-                    # add repo to list
-                    repo_list.append(new_repo)
+                    print('Searching for .java files for {}...'.format(
+                        new_repo.nameWithOwner))
+                    if has_java_file(new_repo.nameWithOwner, tokens[int(current_token)].replace('Bearer ', '')):
 
-                    bar.update(len(repo_list))
+                        # add repo to list
+                        repo_list.append(new_repo)
 
-                if len(repo_list) == total_repos:
-                    break
+                        bar.update(len(repo_list))
+
+                    if len(repo_list) == total_repos:
+                        break
+
+                    current_cursor = repo_list[-1].cursor if len(
+                        repo_list) > 0 else None
+            else:
+                current_cursor = None
+                stars = '<{}'.format(repo_list[-1].stargazerCount)
+                print(stars)
 
         except Exception as err:
             print(err)
