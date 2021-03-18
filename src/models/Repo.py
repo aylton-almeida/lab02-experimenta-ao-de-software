@@ -1,6 +1,6 @@
 from __future__ import annotations
-from pandas.core.frame import DataFrame
 from pandas.core.series import Series
+from datetime import datetime, timezone
 
 
 class Repo:
@@ -9,7 +9,7 @@ class Repo:
     nameWithOwner: str
     url: str
     stargazerCount: str
-    createdAt: str
+    age: str
     releases: int
     cbo: int
     dit: int
@@ -23,7 +23,8 @@ class Repo:
             self.nameWithOwner = node.get('nameWithOwner')
             self.url = node.get('url')
             self.stargazerCount = node.get('stargazerCount')
-            self.createdAt = node.get('createdAt')
+            self.age = (datetime.now(
+                timezone.utc) - datetime.fromisoformat(node.get('createdAt').replace('Z', '+00:00'))).days
 
             if releases := node.get('releases'):
                 self.releases = releases.get('totalCount')

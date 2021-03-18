@@ -1,28 +1,31 @@
-import csv
 import pandas as pd
-from src.models.Repo import Repo
+from statistics import median
 
 
-def get_ck_data(classPath: str, methodPath: str):
-    requiredDict = {}
+def get_ck_data(path: str):
 
-    with open(classPath, newline='') as csvfile:
-        data = csv.DictReader(csvfile)
-        for row in data:
-            requiredDict[row['class']] = {
-                'cbo': int(row['cbo']), 'dit': int(row['dit']), 'wmc': int(row['wmc']), 'loc': int(row['loc'])}
+    data_frame = pd.read_csv(path)
 
-    with open(methodPath, newline='') as csvfile:
-        data = csv.DictReader(csvfile)
-        for row in data:
-            requiredDict[row['method']] = {
-                'cbo': int(row['cbo']), 'wmc': int(row['wmc']), 'rfc': int(row['rfc']), 'loc': int(row['loc'])}
+    loc_arr = []
+    cbo_arr = []
+    dit_arr = []
+    wmc_arr = []
 
-    return requiredDict
+    for index, row in data_frame.iterrows():
+        loc_arr.append(row['loc'])
+        cbo_arr.append(row['cbo'])
+        dit_arr.append(row['dit'])
+        wmc_arr.append(row['wmc'])
+
+    return {
+        'loc': sum(loc_arr, 0),
+        'cbo': median(cbo_arr),
+        'dit': median(dit_arr),
+        'wmc': median(wmc_arr),
+    }
 
 
-def save_repos_to_csv(data: list, path: str):
+def save_repos_to_csv(data: list, path: str, mode='w'):
     data_frame = pd.DataFrame([item.__dict__ for item in data])
 
-    with open(path, 'w') as file:
-        data_frame.to_csv(file)
+    data_frame.to_csv(path, mode=mode, header=False)
