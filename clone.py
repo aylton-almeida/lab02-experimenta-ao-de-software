@@ -1,7 +1,6 @@
 import pandas as pd
 import os
 import progressbar
-import git
 import sys
 
 from src.utils.csv import get_ck_data, save_repos_to_csv
@@ -35,7 +34,8 @@ def clone_repo():
 
             print('Cloning repo {}...'.format(repo.nameWithOwner))
             os.system("mkdir -p repos/{}".format(repo_folder))
-            git.Git("repos/{}".format(repo_folder)).clone(repo.url)
+            os.system('git clone {} repos/{}/{}'.format(repo.url, repo_folder,
+                                                        repo.nameWithOwner.split('/')[1]))
 
             print('Running CK...')
             os.system(
