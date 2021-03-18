@@ -12,7 +12,7 @@ load_dotenv()
 
 
 def clone_repo():
-    data_frame = pd.read_csv('repos_data.csv')
+    data_frame = pd.read_csv('repos_data.csv', ';')
 
     # Cleaning folders
     os.system('rm -rf repos/* ck_data.csv')
