@@ -17,15 +17,11 @@ def clone_repo():
 
     already_fetch_size = len([*already_fetch.iterrows()])
 
-    # Cleaning folders
-    os.system('del -r -Force repos/*')
-    # os.system('touch ck_data.csv')
-
     print('Analyzing repos...')
 
     data_arr = [*data_frame.iterrows()]
 
-    # Get first or second half
+    # Get non fetched data
     half_arr = data_arr[already_fetch_size:]
 
     # extremely necessary progress bar for better user experience
@@ -45,12 +41,13 @@ def clone_repo():
                     repo_folder))
 
             repo.add_ck_data(get_ck_data(
-                'repos/{}/class.csv'.format(repo_folder)))
+                'class.csv'.format(repo_folder)))
             save_repos_to_csv([repo], 'ck_data.csv', 'a')
 
             # remove method.csv after finishing
             print('Deleting method.csv...'.format(repo.nameWithOwner))
-            os.system('del method.csv')
+            os.system('rm -rf method.csv class.csv repos/{}/{}'.format(repo.url, repo_folder,
+                                                                       repo.nameWithOwner.split('/')[1]))
 
             bar.update(index + 1)
 
