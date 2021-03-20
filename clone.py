@@ -1,7 +1,6 @@
 import pandas as pd
 import os
 import progressbar
-import sys
 
 from src.utils.csv import get_ck_data, save_repos_to_csv
 from src.models.Repo import Repo
@@ -16,6 +15,7 @@ def clone_repo():
     already_fetch = pd.read_csv('ck_data.csv', ',')
 
     already_fetch_size = len([*already_fetch.iterrows()])
+    os.system('rm -rf repos/*')
 
     print('Analyzing repos...')
 
