@@ -5,10 +5,18 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: Current File",
+      "name": "Clone",
       "type": "python",
       "request": "launch",
-      "program": "${file}",
+      "program": "clone.py",
+      "console": "integratedTerminal",
+      "args": ["1"]
+    },
+    {
+      "name": "Mine",
+      "type": "python",
+      "request": "launch",
+      "program": "mine.py",
       "console": "integratedTerminal"
     }
   ]

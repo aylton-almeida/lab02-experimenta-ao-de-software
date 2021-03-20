@@ -13,21 +13,23 @@ load_dotenv()
 
 def clone_repo():
     data_frame = pd.read_csv('repos_data.csv', ';')
+    already_fetch = pd.read_csv('ck_data.csv', ',')
+
+    already_fetch_size = len([*already_fetch.iterrows()])
 
     # Cleaning folders
-    os.system('rm -rf repos/* ck_data.csv')
-    os.system('touch ck_data.csv')
+    os.system('del -r -Force repos/*')
+    # os.system('touch ck_data.csv')
 
     print('Analyzing repos...')
 
     data_arr = [*data_frame.iterrows()]
-    half = len(data_arr) // 2
 
     # Get first or second half
-    half_arr = data_arr[half:] if len(sys.argv) == 1 else data_arr[:half]
+    half_arr = data_arr[already_fetch_size:]
 
     # extremely necessary progress bar for better user experience
-    with progressbar.ProgressBar(max_value=len(data_frame.index), redirect_stdout=True) as bar:
+    with progressbar.ProgressBar(max_value=len(half_arr), redirect_stdout=True) as bar:
         for index, row in half_arr:
             repo = Repo.from_dataframe(row)
             repo_folder = repo.nameWithOwner.replace('/', '-')
@@ -42,17 +44,13 @@ def clone_repo():
                 "java -jar ck/target/ck-0.6.4-SNAPSHOT-jar-with-dependencies.jar repos/{} true 0 false".format(
                     repo_folder))
 
-            print('Renaming files...')
-            os.system(
-                'mv class.csv repos/{}/class.csv'.format(repo_folder))
-
             repo.add_ck_data(get_ck_data(
                 'repos/{}/class.csv'.format(repo_folder)))
             save_repos_to_csv([repo], 'ck_data.csv', 'a')
 
             # remove method.csv after finishing
             print('Deleting method.csv...'.format(repo.nameWithOwner))
-            os.system('rm -rf method.csv')
+            os.system('del method.csv')
 
             bar.update(index + 1)
 
