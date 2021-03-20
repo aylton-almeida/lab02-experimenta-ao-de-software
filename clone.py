@@ -46,8 +46,7 @@ def clone_repo():
 
             # remove method.csv after finishing
             print('Deleting method.csv...'.format(repo.nameWithOwner))
-            os.system('rm -rf method.csv class.csv repos/{}/{}'.format(repo.url, repo_folder,
-                                                                       repo.nameWithOwner.split('/')[1]))
+            os.system('rm -rf method.csv class.csv repos/*')
 
             bar.update(index + 1)
 
