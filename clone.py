@@ -22,8 +22,8 @@ def clone_repo():
 
     data_arr = [*data_frame.iterrows()]
 
-    initial_index = int(sys.argv[1]) or already_fetch_size
-    final_index = int(sys.argv[2]) or len(data_arr - 1)
+    initial_index = int(sys.argv[1]) if len(sys.argv) > 1 else already_fetch_size
+    final_index = int(sys.argv[2]) if len(sys.argv) > 2 else (len(data_arr) - 1)
 
     print(initial_index, final_index)
 
