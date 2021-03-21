@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 import progressbar
-import git
+import sys
 
 from src.utils.csv import get_ck_data, save_repos_to_csv
 from src.models.Repo import Repo
@@ -22,37 +22,39 @@ def clone_repo():
 
     data_arr = [*data_frame.iterrows()]
 
+    initial_index = int(sys.argv[1]) or already_fetch_size
+    final_index = int(sys.argv[2]) or len(data_arr - 1)
+
+    print(initial_index, final_index)
+
     # Get non fetched data
-    half_arr = data_arr[already_fetch_size:]
+    final_arr = data_arr[initial_index:final_index]
 
     # extremely necessary progress bar for better user experience
-    with progressbar.ProgressBar(max_value=len(half_arr), redirect_stdout=True) as bar:
-        for index, row in half_arr:
+    with progressbar.ProgressBar(max_value=len(final_arr), redirect_stdout=True) as bar:
+        for index, row in final_arr:
             repo = Repo.from_dataframe(row)
-            try:
-                repo_folder = repo.nameWithOwner.replace('/', '-')
+            repo_folder = repo.nameWithOwner.replace('/', '-')
 
-                print('Cloning repo {}...'.format(repo.nameWithOwner))
-                os.system("mkdir -p repos/{}".format(repo_folder))
-                git.Git("repos/{}".format(repo_folder)).clone(repo.url)
+            print('Cloning repo {}...'.format(repo.nameWithOwner))
+            os.system("mkdir -p repos/{}".format(repo_folder))
+            os.system('git clone {} repos/{}/{}'.format(repo.url, repo_folder,
+                                                        repo.nameWithOwner.split('/')[1]))
 
-                print('Running CK...')
-                os.system(
-                    "java -jar ck/target/ck-0.6.4-SNAPSHOT-jar-with-dependencies.jar repos/{} true 0 false".format(
-                        repo_folder))
+            print('Running CK...')
+            os.system(
+                "java -jar ck/target/ck-0.6.4-SNAPSHOT-jar-with-dependencies.jar repos/{} true 0 false".format(
+                    repo_folder))
 
-                repo.add_ck_data(get_ck_data(
-                    'class.csv'.format(repo_folder)))
-                save_repos_to_csv([repo], 'ck_data.csv', 'a')
+            repo.add_ck_data(get_ck_data(
+                'class.csv'.format(repo_folder)))
+            save_repos_to_csv([repo], 'ck_data.csv', 'a')
 
-                # remove method.csv after finishing
-                print('Deleting method.csv...'.format(repo.nameWithOwner))
-                os.system('rm -rf method.csv class.csv repos/*')
-            except:
-                save_repos_to_csv([repo], 'extra_data.csv', 'a')
-            finally:
-                bar.update(index)
-                
+            # remove method.csv after finishing
+            print('Deleting method.csv...'.format(repo.nameWithOwner))
+            os.system('rm -rf method.csv class.csv repos/*')
+
+            bar.update(index + 1)
 
     print('All repos were fetched')
 
