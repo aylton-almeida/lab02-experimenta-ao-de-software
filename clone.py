@@ -12,10 +12,10 @@ load_dotenv()
 
 
 def clone_repo():
-    if len(sys.argv) < 2: 
+    if len(sys.argv) < 2:
         print('Type your destination file')
         return
-    if len(sys.argv) < 3: 
+    if len(sys.argv) < 3:
         print('Type your initial index')
         return
 
@@ -29,7 +29,8 @@ def clone_repo():
 
     destination_file = sys.argv[1]
     initial_index = int(sys.argv[2])
-    final_index = int(sys.argv[3]) if len(sys.argv) > 3 else (len(data_arr) - 1)
+    final_index = int(sys.argv[3]) if len(
+        sys.argv) > 3 else (len(data_arr) - 1)
 
     print(destination_file, initial_index, final_index)
 
@@ -37,7 +38,7 @@ def clone_repo():
     final_arr = data_arr[initial_index:final_index]
 
     # extremely necessary progress bar for better user experience
-    with progressbar.ProgressBar(max_value=len(final_arr), redirect_stdout=True) as bar:
+    with progressbar.ProgressBar(max_value=final_index, min_value=initial_index, redirect_stdout=True) as bar:
         for index, row in final_arr:
             repo = Repo.from_dataframe(row)
             repo_folder = repo.nameWithOwner.replace('/', '-')

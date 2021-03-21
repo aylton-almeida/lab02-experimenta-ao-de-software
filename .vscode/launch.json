@@ -10,7 +10,7 @@
       "request": "launch",
       "program": "clone.py",
       "console": "integratedTerminal",
-      "args": ["1"]
+      "args": ["local_data.csv", "501"]
     },
     {
       "name": "Mine",
