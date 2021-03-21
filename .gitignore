@@ -130,3 +130,5 @@ dmypy.json
 
 ck/
 nohup.out
+class.csv
+method.csv
