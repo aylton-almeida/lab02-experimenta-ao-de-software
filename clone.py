@@ -12,20 +12,26 @@ load_dotenv()
 
 
 def clone_repo():
-    data_frame = pd.read_csv('repos_data.csv', ';')
-    already_fetch = pd.read_csv('ck_data.csv', ',')
+    if len(sys.argv) < 2: 
+        print('Type your destination file')
+        return
+    if len(sys.argv) < 3: 
+        print('Type your initial index')
+        return
 
-    already_fetch_size = len([*already_fetch.iterrows()])
+    data_frame = pd.read_csv('repos_data.csv', ';')
+
     os.system('rm -rf repos/*')
 
     print('Analyzing repos...')
 
     data_arr = [*data_frame.iterrows()]
 
-    initial_index = int(sys.argv[1]) if len(sys.argv) > 1 else already_fetch_size
-    final_index = int(sys.argv[2]) if len(sys.argv) > 2 else (len(data_arr) - 1)
+    destination_file = sys.argv[1]
+    initial_index = int(sys.argv[2])
+    final_index = int(sys.argv[3]) if len(sys.argv) > 3 else (len(data_arr) - 1)
 
-    print(initial_index, final_index)
+    print(destination_file, initial_index, final_index)
 
     # Get non fetched data
     final_arr = data_arr[initial_index:final_index]
@@ -48,7 +54,7 @@ def clone_repo():
 
             repo.add_ck_data(get_ck_data(
                 'class.csv'.format(repo_folder)))
-            save_repos_to_csv([repo], 'ck_data.csv', 'a')
+            save_repos_to_csv([repo], destination_file, 'a')
 
             # remove method.csv after finishing
             print('Deleting method.csv...'.format(repo.nameWithOwner))
